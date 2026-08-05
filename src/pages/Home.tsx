@@ -2,28 +2,17 @@ import type { FunctionalComponent } from "preact";
 import type { RoutableProps } from "preact-router";
 import { useState, useEffect } from "preact/hooks";
 import { FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
-import { LogOut } from "lucide-react";
 import { route } from "preact-router";
+import UserNavbar from "../components/layout/UserNavbar";
 
 const Home: FunctionalComponent<RoutableProps> = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem("token");
       const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-      const user = localStorage.getItem("currentUser");
-      
       setIsLoggedIn(loggedIn && !!token);
-      if (user) {
-        try {
-          const userData = JSON.parse(user);
-          setUserName(userData.username || userData.name || "User");
-        } catch (e) {
-          setUserName("User");
-        }
-      }
     };
     
     checkAuth();
@@ -31,63 +20,9 @@ const Home: FunctionalComponent<RoutableProps> = () => {
     return () => window.removeEventListener("storage", checkAuth);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("currentUser");
-    setIsLoggedIn(false);
-    route("/");
-  };
-
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 text-slate-900">
-      <header className="fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] -translate-x-1/2 rounded-xl bg-white/85 backdrop-blur-md border border-slate-100 shadow-md">
-        <div className="flex items-center justify-between px-4 py-3 md:px-6">
-          <div className="flex items-center gap-3">
-            <a href="/" className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 text-blue-700 font-bold">C</div>
-              <span className="hidden text-lg font-semibold text-slate-900 sm:block">CGPA Calculator</span>
-            </a>
-          </div>
-
-          <nav className="flex flex-wrap items-center gap-5 sm:gap-8">
-            {isLoggedIn ? (
-              <>
-                <a href="/" className="border-b-4 border-blue-500 px-1 pb-2 pt-2 text-sm font-semibold text-slate-950">Home</a>
-                <a href="/gpacalculate" className="border-b-4 border-transparent px-1 pb-2 pt-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-slate-950">Calculate</a>
-                <a href="/dashboard" className="border-b-4 border-transparent px-1 pb-2 pt-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-slate-950">Dashboard</a>
-                <div className="border-l border-slate-200 pl-4 flex items-center gap-3">
-                  <span className="text-sm text-slate-700 font-medium">{userName}</span>
-                  <button
-                    onClick={handleLogout}
-                    className="rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 flex items-center gap-2"
-                  >
-                    <LogOut className="h-4 w-4" /> Logout
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <a href="/" className="border-b-4 border-blue-500 px-1 pb-2 pt-2 text-sm font-semibold text-slate-950">
-                  Home
-                </a>
-                <button
-                  onClick={() => route('/login')}
-                  className="border-b-4 border-transparent px-1 pb-2 pt-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-slate-950"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={() => route('/signup')}
-                  className="border-b-4 border-transparent px-1 pb-2 pt-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-slate-950"
-                >
-                  Sign up
-                </button>
-              </>
-            )}
-          </nav>
-        </div>
-      </header>
+      <UserNavbar active="home" isLoggedIn={isLoggedIn} />
 
       <main className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-8 md:px-12">
         <div className="relative overflow-hidden rounded-[2rem] border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-blue-100 p-8 shadow-[0_20px_60px_-20px_rgba(2,6,23,0.08)] sm:p-12">
