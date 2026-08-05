@@ -64,8 +64,8 @@ const UserNavbar = ({ user, isLoggedIn }: UserNavbarProps) => {
             </button>
           </div>
 
-{/* CENTER — Nav links */}
-          <nav className="hidden md:flex items-center gap-8">
+{/* CENTER — Nav links (pushed to the right for guests, centered for authenticated users) */}
+          <nav className={`hidden md:flex items-center gap-8 ${!loggedIn ? "md:ml-auto" : ""}`}>
             <button
               onClick={() => route("/")}
               className={`border-b-4 px-1 pb-2 pt-2 text-sm font-semibold transition ${
