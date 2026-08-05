@@ -32,9 +32,12 @@ app.use('/api/result', result_1.default);
 app.use('/api/feedback', feedback_1.default);
 const PORT = process.env.PORT || 5000;
 const startServer = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.default)();
+    const dbReady = yield (0, db_1.default)();
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
+        if (!dbReady) {
+            console.log('Database connection is not available. Some API endpoints will not work until MongoDB is reachable.');
+        }
     });
 });
 startServer();
