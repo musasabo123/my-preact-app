@@ -1,6 +1,7 @@
 import type { FunctionalComponent } from "preact"; 
 import type { RoutableProps } from "preact-router";
 import { useState } from "preact/hooks";
+import { api } from "../utils/api";
 
 const Signup: FunctionalComponent<RoutableProps> = () => {
   // State for all form data
@@ -72,13 +73,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
     }
 
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+      const response = await api.register(form);
 
       const data = await response.json();
 
