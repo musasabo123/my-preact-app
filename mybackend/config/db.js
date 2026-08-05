@@ -16,15 +16,18 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     const mongoUri = process.env.MONGO_URI;
     if (!mongoUri) {
-        throw new Error('MONGO_URI is not set in the environment');
+        console.warn('MONGO_URI is not set in the environment. Continuing without database connection.');
+        return false;
     }
     try {
         const conn = yield mongoose_1.default.connect(mongoUri);
         console.log(`MongoDB Connected: ${conn.connection.host}`);
+        return true;
     }
     catch (error) {
         console.error('Error connecting to MongoDB:', error);
-        process.exit(1);
+        console.warn('Continuing without database connection. API routes that require MongoDB will fail until the database is reachable.');
+        return false;
     }
 });
 exports.default = connectDB;

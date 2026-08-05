@@ -57,7 +57,8 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 exports.registerUser = registerUser;
@@ -93,7 +94,8 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 exports.loginUser = loginUser;
