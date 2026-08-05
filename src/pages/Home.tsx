@@ -22,7 +22,7 @@ const Home: FunctionalComponent<RoutableProps> = () => {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 text-slate-900">
-      <UserNavbar active="home" isLoggedIn={isLoggedIn} />
+<UserNavbar isLoggedIn={isLoggedIn} />
 
       <main className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-8 md:px-12">
         <div className="relative overflow-hidden rounded-[2rem] border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-blue-100 p-8 shadow-[0_20px_60px_-20px_rgba(2,6,23,0.08)] sm:p-12">
