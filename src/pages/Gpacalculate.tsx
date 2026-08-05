@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { route } from "preact-router";
 import { Trash2 } from "lucide-react";
 import { api } from "../utils/api";
-import UserNavbar from "../components/layout/UserNavbar";
+import AppLayout from "../components/layout/AppLayout";
 
 const gradePoints: Record<string, number> = {
   A: 5,
@@ -155,8 +155,7 @@ const GpaCalculator: FunctionalComponent<RoutableProps> = () => {
   return (
     <>
 <div className="min-h-screen bg-white text-slate-900">
-      {/* Navbar (shared UserNavbar) */}
-<UserNavbar />
+      <AppLayout>
 
       <div className="p-6 max-w-4xl mx-auto pt-28">
       {/* Course Information */}
@@ -463,7 +462,8 @@ const GpaCalculator: FunctionalComponent<RoutableProps> = () => {
           </motion.div>
         </div>
       )}
-      </div>
+</div>
+      </AppLayout>
     </div>
     </>
   );

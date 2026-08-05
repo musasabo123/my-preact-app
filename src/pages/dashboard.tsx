@@ -30,7 +30,7 @@ import {
   Calculator,
 } from "lucide-react";
 import { api } from "../utils/api";
-import UserNavbar from "../components/layout/UserNavbar";
+import AppLayout from "../components/layout/AppLayout";
 
 const calculateCGPA = (results: any[]) => {
   if (results.length === 0) return null;
@@ -222,9 +222,8 @@ const Dashboard: FunctionalComponent<RoutableProps> = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950 w-full">
-{/* Navbar */}
-      <UserNavbar user={user} />
+<div className="min-h-screen bg-slate-50 text-slate-950 w-full">
+<AppLayout user={user}>
 
       {/* Dashboard Content */}
       <div className="flex flex-col items-center justify-center px-4 sm:px-6 pt-32 pb-10 w-full">
@@ -629,10 +628,11 @@ const Dashboard: FunctionalComponent<RoutableProps> = () => {
                   Hide
                 </button>
               </div>
-            </motion.div>
+</motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+      </AppLayout>
     </div>
   );
 };
