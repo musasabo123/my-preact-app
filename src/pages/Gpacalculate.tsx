@@ -156,7 +156,7 @@ const GpaCalculator: FunctionalComponent<RoutableProps> = () => {
     <>
 <div className="min-h-screen bg-white text-slate-900">
       {/* Navbar (shared UserNavbar) */}
-      <UserNavbar active="calculate" />
+<UserNavbar />
 
       <div className="p-6 max-w-4xl mx-auto pt-28">
       {/* Course Information */}
