@@ -5,11 +5,10 @@ import { LogOut } from "lucide-react";
 
 interface UserNavbarProps {
   user?: any;
-  active?: "home" | "calculate" | "dashboard";
   isLoggedIn?: boolean;
 }
 
-const UserNavbar = ({ user, active = "dashboard", isLoggedIn }: UserNavbarProps) => {
+const UserNavbar = ({ user, isLoggedIn }: UserNavbarProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const currentUser = user || (() => {
     try {
@@ -21,6 +20,17 @@ const UserNavbar = ({ user, active = "dashboard", isLoggedIn }: UserNavbarProps)
   })();
 
   const loggedIn = isLoggedIn !== undefined ? isLoggedIn : localStorage.getItem("isLoggedIn") === "true";
+
+  // Automatically detect the active page from the current pathname
+  const path = typeof window !== "undefined" ? window.location.pathname : "/";
+  const active: "home" | "calculate" | "dashboard" =
+    path === "/" || path === "/home"
+      ? "home"
+      : path.startsWith("/gpa-calculate")
+      ? "calculate"
+      : path.startsWith("/dashboard")
+      ? "dashboard"
+      : "home";
 
   const logout = () => {
     localStorage.removeItem("isLoggedIn");
