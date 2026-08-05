@@ -26,10 +26,13 @@ app.use('/api/feedback', feedbackRoutes);
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  await connectDB();
+  const dbReady = await connectDB();
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    if (!dbReady) {
+      console.log('Database connection is not available. Some API endpoints will not work until MongoDB is reachable.');
+    }
   });
 };
 
