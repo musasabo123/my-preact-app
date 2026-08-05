@@ -3,7 +3,7 @@ import type { RoutableProps } from "preact-router";
 import { useState, useEffect } from "preact/hooks";
 import { FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
 import { route } from "preact-router";
-import UserNavbar from "../components/layout/UserNavbar";
+import AppLayout from "../components/layout/AppLayout";
 
 const Home: FunctionalComponent<RoutableProps> = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,8 +21,8 @@ const Home: FunctionalComponent<RoutableProps> = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 text-slate-900">
-<UserNavbar isLoggedIn={isLoggedIn} />
+<div className="relative min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-50 text-slate-900">
+<AppLayout isLoggedIn={isLoggedIn}>
 
       <main className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-8 md:px-12">
         <div className="relative overflow-hidden rounded-[2rem] border border-blue-100 bg-gradient-to-br from-white via-blue-50 to-blue-100 p-8 shadow-[0_20px_60px_-20px_rgba(2,6,23,0.08)] sm:p-12">
@@ -196,10 +196,11 @@ const Home: FunctionalComponent<RoutableProps> = () => {
           </div>
         </div>
 
-        <div className="border-t border-slate-700 px-6 py-6 text-center text-sm text-slate-400 sm:px-8">
+<div className="border-t border-slate-700 px-6 py-6 text-center text-sm text-slate-400 sm:px-8">
           © 2025 CGPA Calculator. All rights reserved.
         </div>
       </footer>
+      </AppLayout>
     </div>
   );
 };
