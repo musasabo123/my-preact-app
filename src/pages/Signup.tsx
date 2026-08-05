@@ -1,6 +1,7 @@
 import type { FunctionalComponent } from "preact"; 
 import type { RoutableProps } from "preact-router";
 import { useState } from "preact/hooks";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { api } from "../utils/api";
 
 const Signup: FunctionalComponent<RoutableProps> = () => {
@@ -19,6 +20,8 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
   });
 
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [strength, setStrength] = useState("");
   const [agree, setAgree] = useState(false);
 
@@ -83,10 +86,10 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
 
         clearForm();
 
-        // Redirect after 2 seconds
+        // Show success state and redirect after ~1.5 seconds (do not auto log in)
         setTimeout(() => {
           window.location.href = "/login";
-        }, 1000);
+        }, 1500);
       } else {
         setMessage({ type: "error", text: data.message || "Registration failed" });
       }
@@ -96,34 +99,29 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-white px-2 sm:px-0 overflow-hidden text-slate-900">
-      <nav className="flex w-full items-center justify-between px-6 py-5 bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
-        <a href="/" className="text-xl font-semibold tracking-tight text-slate-950">
-          CGPA Calculator
-        </a>
-        <div className="flex items-center gap-5 sm:gap-8">
-          <a href="/" className="border-b-4 border-transparent px-1 pb-2 pt-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-slate-950">
-            Home
-          </a>
+    <div className="min-h-screen flex flex-col items-center bg-slate-100 px-2 sm:px-0 overflow-hidden text-slate-900">
+      <main className="flex min-h-screen flex-1 items-center justify-center px-4 py-10 sm:px-6 lg:px-8 w-full">
+        <div className="relative w-full max-w-5xl rounded-[28px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 shadow-[0_40px_120px_-60px_rgba(15,23,42,0.25)] sm:p-10">
           <a
-            href="/login"
-            className="border-b-4 border-transparent px-1 pb-2 pt-2 text-sm font-semibold text-slate-600 transition hover:border-blue-200 hover:text-slate-950"
+            href="/"
+            aria-label="Go back home"
+            className="absolute left-6 top-6 z-10 inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-950 shadow-lg shadow-slate-200/70 transition hover:-translate-x-0.5 hover:border-slate-300 hover:bg-slate-50"
           >
-            Login
+            <ArrowLeft size={24} strokeWidth={3} />
           </a>
-          <a href="/signup" className="border-b-4 border-blue-500 px-1 pb-2 pt-2 text-sm font-semibold text-slate-950">
-            Sign up
-          </a>
-        </div>
-      </nav>
-
-      <main className="flex flex-1 items-center justify-center px-4 py-6 sm:px-6 lg:px-8 w-full">
-        <div className="w-full max-w-5xl rounded-[28px] border border-slate-200 bg-white p-4 shadow-[0_20px_60px_-30px_rgba(15,23,42,0.12)] sm:p-6">
-          <div className="grid gap-6 lg:grid-cols-[0.95fr_0.65fr] items-start">
-            <div className="rounded-3xl bg-slate-50 p-6 shadow-xl shadow-slate-200/60">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+            <section className="rounded-3xl bg-slate-50 p-6 shadow-xl shadow-slate-200/60">
               <div className="h-full min-h-[26rem] overflow-hidden rounded-[32px] border border-slate-200 bg-gradient-to-br from-slate-100 via-slate-50 to-white shadow-inner">
-                <div className="flex h-full items-center justify-center p-6">
-                  <svg viewBox="0 0 560 420" className="h-full w-full" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="signupCgpaTitle">
+                <div className="flex h-full flex-col justify-between gap-6 p-6 pt-20">
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.24em] text-blue-500">Create your account</p>
+                    <h1 className="mt-5 text-3xl font-semibold tracking-tight text-slate-950">Join CGPA Calculator.</h1>
+                    <p className="mt-3 text-sm leading-6 text-slate-500">
+                      Create your account to calculate your GPA, monitor your academic progress, and access your personalized dashboard.
+                    </p>
+                  </div>
+
+                  <svg viewBox="0 0 560 420" className="h-full min-h-[17rem] w-full" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="signupCgpaTitle">
                     <title id="signupCgpaTitle">CGPA calculator dashboard preview</title>
                     <defs>
                       <linearGradient id="signupCgpaBg" x1="62" y1="28" x2="498" y2="392" gradientUnits="userSpaceOnUse">
@@ -196,13 +194,11 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                   </svg>
                 </div>
               </div>
-            </div>
+            </section>
 
-            <div className="rounded-3xl bg-white p-6 shadow-xl shadow-slate-200/80">
-              <div className="mb-4">
-                <h2 className="text-2xl font-semibold text-slate-950">Sign up</h2>
-                <p className="mt-2 text-sm text-slate-500">Enter your details to create your account.</p>
-              </div>
+            <div className="rounded-3xl bg-white p-8 shadow-xl shadow-slate-200/80">
+              <h2 className="text-2xl font-semibold text-slate-950">Create account</h2>
+              <p className="mt-2 text-sm text-slate-500">Enter your details to get started.</p>
 
               {message && (
                 <div
@@ -224,7 +220,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                 </div>
               )}
 
-              <form onSubmit={handleSubmit} className="mt-5 space-y-3">
+              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <label className="block text-sm font-medium text-slate-700">
                     First Name
@@ -234,7 +230,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                       value={form.firstName}
                       onInput={handleChange}
                       placeholder="First"
-                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                       required
                     />
                   </label>
@@ -246,7 +242,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                       value={form.lastName}
                       onInput={handleChange}
                       placeholder="Last"
-                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                       required
                     />
                   </label>
@@ -260,7 +256,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                     value={form.email}
                     onInput={handleChange}
                     placeholder="you@example.com"
-                    className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     required
                   />
                 </label>
@@ -273,7 +269,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                     value={form.username}
                     onInput={handleChange}
                     placeholder="username"
-                    className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     required
                   />
                 </label>
@@ -287,7 +283,8 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                       value={form.phoneNumber}
                       onInput={handleChange}
                       pattern="[0-9]{10,15}"
-                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      placeholder="08012345678"
+                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                       required
                     />
                   </label>
@@ -297,7 +294,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                       name="gender"
                       value={form.gender}
                       onInput={handleChange}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                       required
                     >
                       <option value="" disabled>Gender</option>
@@ -310,15 +307,25 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
 
                 <label className="block text-sm font-medium text-slate-700">
                   Password
-                  <input
-                    type="password"
-                    name="password"
-                    value={form.password}
-                    onInput={(e) => handlePassword((e.target as HTMLInputElement).value)}
-                    placeholder="••••••••"
-                    className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    required
-                  />
+                  <div className="relative mt-2">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={form.password}
+                      onInput={(e) => handlePassword((e.target as HTMLInputElement).value)}
+                      placeholder="••••••••"
+                      className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 pr-12 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-4 flex items-center text-slate-500 transition hover:text-slate-900"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                   {form.password && (
                     <p className={`mt-1 text-xs font-medium ${strength.includes("Weak") ? "text-red-500" : strength.includes("Medium") ? "text-amber-500" : "text-emerald-500"}`}>
                       {strength}
@@ -328,14 +335,24 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
 
                 <label className="block text-sm font-medium text-slate-700">
                   Confirm Password
-                  <input
-                    type="password"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onInput={(e) => setConfirmPassword((e.target as HTMLInputElement).value)}
-                    className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    required
-                  />
+                  <div className="relative mt-2">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onInput={(e) => setConfirmPassword((e.target as HTMLInputElement).value)}
+                      className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 pr-12 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-4 flex items-center text-slate-500 transition hover:text-slate-900"
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                   {confirmPassword && confirmPassword === form.password && (
                     <p className="mt-1 text-xs font-medium text-emerald-500">✓ Match</p>
                   )}
@@ -348,7 +365,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                       name="level"
                       value={form.level}
                       onInput={handleChange}
-                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                       required
                     >
                       <option value="">Select</option>
@@ -367,7 +384,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                       value={form.department}
                       onInput={handleChange}
                       placeholder="Dept"
-                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                       required
                     />
                   </label>
@@ -379,7 +396,7 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
                     name="university"
                     value={form.university}
                     onInput={handleChange}
-                    className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-2 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     required
                   >
                     <option value="">Select University</option>
@@ -404,13 +421,18 @@ const Signup: FunctionalComponent<RoutableProps> = () => {
 
                 <button
                   type="submit"
-                  className="w-full mt-5 rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  className="w-full rounded-2xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
                 >
                   Create account
                 </button>
               </form>
 
-              
+              <div className="mt-6 text-center text-sm text-slate-500">
+                Already have an account?{" "}
+                <a href="/login" className="font-medium text-blue-600 hover:text-blue-700">
+                  Sign In
+                </a>
+              </div>
             </div>
           </div>
         </div>
