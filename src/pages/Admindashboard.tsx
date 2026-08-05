@@ -13,6 +13,10 @@ import {
   Settings,
   LogOut,
   Menu,
+  Moon,
+  Sun,
+  Bell,
+  UserCircle,
 } from "lucide-react";
 import { api } from "../utils/api";
 
@@ -21,6 +25,8 @@ const AdminDashboard: FunctionalComponent<RoutableProps> = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("dashboard");
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -104,12 +110,55 @@ const AdminDashboard: FunctionalComponent<RoutableProps> = () => {
     route("/login");
   };
 
-  const navItems = [
-    { label: "Dashboard", icon: LayoutDashboard, active: true },
-    { label: "Users", icon: Users, active: false },
-    { label: "Feedback", icon: MessageSquare, active: false },
-    { label: "Settings", icon: Settings, active: false },
+const navItems = [
+    { label: "Dashboard", id: "dashboard", icon: LayoutDashboard },
+    { label: "Users", id: "users", icon: Users },
+    { label: "Feedback", id: "feedback", icon: MessageSquare },
+    { label: "Settings", id: "settings", icon: Settings },
   ];
+
+  // Toggle dark mode class on the root element
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
+
+  // Smooth scroll to a section
+  const scrollToSection = (id: string) => {
+    if (id === "dashboard") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+    setSidebarOpen(false);
+  };
+
+  // Intersection Observer to highlight the active section while scrolling
+  useEffect(() => {
+    const sections = navItems
+      .map((item) => document.getElementById(item.id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900">
@@ -125,24 +174,27 @@ const AdminDashboard: FunctionalComponent<RoutableProps> = () => {
           </span>
         </div>
 
-        {/* Navigation */}
+{/* Navigation */}
         <nav className="flex-1 space-y-1.5 px-3 py-5 lg:px-4">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isActive = activeSection === item.id;
             return (
-              <button
+              <motion.button
                 key={item.label}
-                onClick={() => setSidebarOpen(false)}
+                onClick={() => scrollToSection(item.id)}
                 title={item.label}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
-                  item.active
+                  isActive
                     ? "bg-blue-600 text-white shadow-md shadow-blue-500/25"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 } md:justify-center lg:justify-start`}
               >
-                <Icon className={`h-5 w-5 shrink-0 ${item.active ? "text-white" : "text-slate-400 group-hover:text-blue-500"}`} />
+                <Icon className={`h-5 w-5 shrink-0 transition-colors ${isActive ? "text-white" : "text-slate-400 group-hover:text-blue-500"}`} />
                 <span className="hidden lg:block">{item.label}</span>
-              </button>
+              </motion.button>
             );
           })}
         </nav>
@@ -210,22 +262,25 @@ const AdminDashboard: FunctionalComponent<RoutableProps> = () => {
                 <span className="text-lg font-semibold text-slate-900">Admin Dashboard</span>
               </div>
 
-              <nav className="flex-1 space-y-1.5 px-4 py-5">
+<nav className="flex-1 space-y-1.5 px-4 py-5">
                 {navItems.map((item) => {
                   const Icon = item.icon;
+                  const isActive = activeSection === item.id;
                   return (
-                    <button
+                    <motion.button
                       key={item.label}
-                      onClick={() => setSidebarOpen(false)}
+                      onClick={() => scrollToSection(item.id)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
-                        item.active
+                        isActive
                           ? "bg-blue-600 text-white shadow-md shadow-blue-500/25"
                           : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                       }`}
                     >
-                      <Icon className={`h-5 w-5 shrink-0 ${item.active ? "text-white" : "text-slate-400"}`} />
+                      <Icon className={`h-5 w-5 shrink-0 transition-colors ${isActive ? "text-white" : "text-slate-400"}`} />
                       <span>{item.label}</span>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </nav>
@@ -253,62 +308,65 @@ const AdminDashboard: FunctionalComponent<RoutableProps> = () => {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
+{/* Main Content */}
       <div className="flex min-h-screen w-full flex-col bg-slate-50 md:pl-[72px] lg:pl-[260px]">
         <div className="px-4 sm:px-6 py-4 pt-20 md:pt-6">
           <div className="max-w-5xl mx-auto space-y-4">
-            <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
-              <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 mb-1">Admin Dashboard</h1>
-              <p className="text-slate-600">Quick overview of users and feedback.</p>
-            </div>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* Dashboard Section */}
+            <section id="dashboard" className="scroll-mt-20 space-y-4">
               <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-slate-600 font-medium">Total Users</p>
-                    <p className="text-3xl font-bold text-slate-950 mt-2">{users.length}</p>
-                  </div>
-                  <Users className="w-10 h-10 text-blue-500/20" />
-                </div>
+                <h1 className="text-2xl sm:text-3xl font-semibold text-slate-950 mb-1">Admin Dashboard</h1>
+                <p className="text-slate-600">Quick overview of users and feedback.</p>
               </div>
 
-              <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-slate-600 font-medium">Admins</p>
-                    <p className="text-3xl font-bold text-slate-950 mt-2">{adminCount}</p>
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-600 font-medium">Total Users</p>
+                      <p className="text-3xl font-bold text-slate-950 mt-2">{users.length}</p>
+                    </div>
+                    <Users className="w-10 h-10 text-blue-500/20" />
                   </div>
-                  <Shield className="w-10 h-10 text-green-500/20" />
                 </div>
-              </div>
 
-              <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-slate-600 font-medium">Regular Users</p>
-                    <p className="text-3xl font-bold text-slate-950 mt-2">{userCount}</p>
+                <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-600 font-medium">Admins</p>
+                      <p className="text-3xl font-bold text-slate-950 mt-2">{adminCount}</p>
+                    </div>
+                    <Shield className="w-10 h-10 text-green-500/20" />
                   </div>
-                  <UserCheck className="w-10 h-10 text-purple-500/20" />
                 </div>
-              </div>
 
-              <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-slate-600 font-medium">Feedback</p>
-                    <p className="text-3xl font-bold text-slate-950 mt-2">{feedbacks.length}</p>
+                <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-600 font-medium">Regular Users</p>
+                      <p className="text-3xl font-bold text-slate-950 mt-2">{userCount}</p>
+                    </div>
+                    <UserCheck className="w-10 h-10 text-purple-500/20" />
                   </div>
-                  <ClipboardList className="w-10 h-10 text-amber-500/20" />
+                </div>
+
+                <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-slate-600 font-medium">Feedback</p>
+                      <p className="text-3xl font-bold text-slate-950 mt-2">{feedbacks.length}</p>
+                    </div>
+                    <ClipboardList className="w-10 h-10 text-amber-500/20" />
+                  </div>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Two-Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Recent Users */}
-              <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
+              <section id="users" className="scroll-mt-20 rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
                 <h2 className="text-lg font-semibold text-slate-950 mb-4">Recent Users</h2>
                 {loading ? (
                   <p className="text-sm text-slate-500">Loading...</p>
@@ -330,10 +388,10 @@ const AdminDashboard: FunctionalComponent<RoutableProps> = () => {
                     {users.length === 0 && <p className="text-sm text-slate-500">No users yet.</p>}
                   </div>
                 )}
-              </div>
+              </section>
 
               {/* Recent Feedback */}
-              <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
+              <section id="feedback" className="scroll-mt-20 rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
                 <h2 className="text-lg font-semibold text-slate-950 mb-4">Recent Feedback</h2>
                 {feedbackLoading ? (
                   <p className="text-sm text-slate-500">Loading...</p>
@@ -353,8 +411,81 @@ const AdminDashboard: FunctionalComponent<RoutableProps> = () => {
                     {feedbacks.length === 0 && <p className="text-sm text-slate-500">No feedback yet.</p>}
                   </div>
                 )}
-              </div>
+              </section>
             </div>
+
+            {/* Settings Section */}
+            <section id="settings" className="scroll-mt-20 space-y-4">
+              <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm">
+                <h2 className="text-xl font-semibold text-slate-950 mb-1">Settings</h2>
+                <p className="text-slate-600">Manage your admin preferences.</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Dark Mode Toggle */}
+                <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
+                      {darkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">Dark Mode</p>
+                      <p className="text-xs text-slate-500">{darkMode ? "Enabled" : "Disabled"}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setDarkMode((prev) => !prev)}
+                    className={`relative h-6 w-11 rounded-full transition-colors duration-200 ${darkMode ? "bg-blue-600" : "bg-slate-300"}`}
+                    aria-label="Toggle dark mode"
+                  >
+                    <motion.span
+                      layout
+                      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow ${darkMode ? "left-[22px]" : "left-0.5"}`}
+                    />
+                  </button>
+                </div>
+
+                {/* Admin Profile */}
+                <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                    <UserCircle className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-900">Admin Profile</p>
+                    <p className="text-xs text-slate-500 truncate">{adminName}</p>
+                  </div>
+                </div>
+
+                {/* Notifications (placeholder) */}
+                <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                    <Bell className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">Notifications</p>
+                    <p className="text-xs text-slate-500">Coming soon</p>
+                  </div>
+                </div>
+
+                {/* Logout */}
+                <div className="rounded-2xl bg-white p-4 border border-slate-200 shadow-sm flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-600">
+                    <LogOut className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-900">Logout</p>
+                    <p className="text-xs text-slate-500">Sign out of the admin panel</p>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </div>
