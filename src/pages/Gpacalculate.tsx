@@ -4,6 +4,8 @@ import type { RoutableProps } from "preact-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { route } from "preact-router";
 import { Trash2 } from "lucide-react";
+import { api } from "../utils/api";
+import UserNavbar from "../components/layout/UserNavbar";
 
 const gradePoints: Record<string, number> = {
   A: 5,
@@ -112,19 +114,12 @@ const GpaCalculator: FunctionalComponent<RoutableProps> = () => {
       const token = localStorage.getItem("token");
       const user = JSON.parse(localStorage.getItem("currentUser") || '{}');
       const gpaValue = gpa;
-      const res = await fetch("/api/result/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: user._id,
-          semester: `${yearInput} - ${semesterInput}`,
-          gpa: gpaValue,
-          courses,
-        }),
-      });
+      const res = await api.addResult({
+        userId: user._id,
+        semester: `${yearInput} - ${semesterInput}`,
+        gpa: gpaValue,
+        courses,
+      }, token!);
       const data = await res.json();
       if (res.ok) {
         setToastMsg("Results saved successfully!");
@@ -159,68 +154,10 @@ const GpaCalculator: FunctionalComponent<RoutableProps> = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-white text-slate-900">
-      {/* Navbar (static, no dropdown) */}
-      <nav className="bg-white border-b border-slate-200 shadow-sm fixed w-full top-0 left-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1
-            className="text-2xl font-bold cursor-pointer"
-            onClick={() => route("/")}
-          >
-            🎓 GPA Tracker
-          </h1>
-          <ul className="hidden md:flex space-x-6 font-medium">
-            <li>
-              <button
-                onClick={() => route("/")}
-                className="hover:text-blue-700 transition"
-              >
-                Home
-              </button>
-            </li>
-            {/* <li>
-              <button
-                onClick={() => route("/gpa-calculate")}
-                className="hover:text-blue-700 transition"
-              >
-                Calculate GPA
-              </button>
-            </li> */}
-            <li>
-              <button
-                onClick={() => route("/dashboard")}
-                className="hover:text-blue-400 transition"
-              >
-                Dashboard
-              </button>
-            </li>
-            <li>
-              {isLoggedIn ? (
-                <button
-                  onClick={() => {
-                    localStorage.removeItem("isLoggedIn");
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("currentUser");
-                    route("/login");
-                  }}
-                  className="hover:text-red-600 transition"
-                >
-                  Logout
-                </button>
-              ) : (
-                <button
-                  onClick={() => route("/login")}
-                  className="hover:text-green-700 transition"
-                >
-                  Login
-                </button>
-              )}
-            </li>
-          </ul>
-        </div>
-      </nav>
-  {/* // For nav dropdown */}
-  {/* const [menuOpen, setMenuOpen] = useState(false); */}
+<div className="min-h-screen bg-white text-slate-900">
+      {/* Navbar (shared UserNavbar) */}
+      <UserNavbar active="calculate" />
+
       <div className="p-6 max-w-4xl mx-auto pt-28">
       {/* Course Information */}
       <motion.div
