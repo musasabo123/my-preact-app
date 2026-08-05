@@ -52,8 +52,9 @@ const registerUser = async (req: Request, res: Response) => {
       role: user.role,
       token,
     });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+  } catch (error: any) {
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -91,8 +92,9 @@ const loginUser = async (req: Request, res: Response) => {
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+  } catch (error: any) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
