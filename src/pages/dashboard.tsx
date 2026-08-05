@@ -224,7 +224,7 @@ const Dashboard: FunctionalComponent<RoutableProps> = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950 w-full">
 {/* Navbar */}
-      <UserNavbar user={user} active="dashboard" />
+      <UserNavbar user={user} />
 
       {/* Dashboard Content */}
       <div className="flex flex-col items-center justify-center px-4 sm:px-6 pt-32 pb-10 w-full">
